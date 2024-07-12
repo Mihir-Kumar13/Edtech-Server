@@ -4,6 +4,8 @@ import { Course } from "../models/Course.model.js";
 import { uploadToCloudinary } from "../utils/imageUploader.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { Section } from "../models/Section.model.js";
+import { RatingandReview } from "../models/RatingandReview.model.js";
 
 export const createCourse = async (req, res) => {
   try {
@@ -73,6 +75,62 @@ export const createCourse = async (req, res) => {
       .json(new ApiResponse(200, newCourse, "Course created successfully"));
   } catch (error) {
     return res.status(500).json(new ApiError(500, "Error in course creation"));
+  }
+};
+
+export const getCourse = async (req, res) => {
+  try {
+    const { courseId } = req.params;
+
+    if (!courseId) {
+      return res.status(400).json(new ApiError(400, "Course ID is required"));
+    }
+
+    const courseDetails = await Course.findById(courseId)
+      .populate({
+        path: "instructor",
+        model: User,
+        select: "-password -token", // Exclude password and token fields
+      })
+      .populate({
+        path: "category",
+        model: Category,
+      })
+      .populate({
+        path: "courseContent",
+        model: Section,
+        populate: {
+          path: "subSection",
+          model: "SubSection",
+        },
+      })
+      .populate({
+        path: "ratings",
+        model: RatingandReview,
+      })
+      .populate({
+        path: "studentsEnrolled",
+        model: User,
+        select: "-password -token", // Exclude password and token fields
+      });
+
+    if (!courseDetails) {
+      return res.status(404).json(new ApiError(404, "Course not found"));
+    }
+
+    return res
+      .status(200)
+      .json(
+        new ApiResponse(
+          200,
+          courseDetails,
+          "Course details fetched successfully"
+        )
+      );
+  } catch (error) {
+    return res
+      .status(500)
+      .json(new ApiError(500, "Error fetching course details"));
   }
 };
 
