@@ -144,7 +144,7 @@ export const loginUser = async (req, res) => {
         expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
         sameSite: "Lax",
         httpOnly: true,
-        secure: false, // Set to false for local development
+        secure: true, // Set to false for local development
       };
 
       console.log("Setting cookie with token:", token); // Debug log
