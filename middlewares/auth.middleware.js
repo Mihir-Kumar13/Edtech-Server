@@ -1,34 +1,38 @@
 import jwt from "jsonwebtoken";
-import { ApiResponse } from "../utils/ApiResponse";
-import { ApiError } from "../utils/ApiError";
+import { ApiError } from "../utils/ApiError.js";
 
 export const auth = (req, res, next) => {
   try {
-    const token =
-      req.cookies.token ||
-      req.body ||
-      req.header("Authorization").replace("Bearer ", "");
+    //console.log(req.cookies);
+    const token = req.cookies.token || req.body.token;
+    console.log("middleware", token);
 
     if (!token) {
+      console.log("Token missing");
       return res.status(400).json(new ApiError(400, "Token missing"));
     }
 
-    try {
-      const decode = jwt.verify(token, process.env.JWT_SECRET);
+    if (typeof token !== "string") {
+      console.log("Token is not a string:", token);
+      return res.status(400).json(new ApiError(400, "Invalid token format"));
+    }
 
-      req.user = decode;
+    try {
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
+      req.user = decoded;
     } catch (error) {
-      return res.status(400).json(new ApiError(400, "Unauthorized request"));
+      console.log("JWT verification error:", error);
+      return res.status(401).json(new ApiError(401, "Unauthorized request"));
     }
 
     next();
   } catch (error) {
+    console.log("Error during authentication:", error);
     return res
-      .status(400)
-      .json(new ApiError(400, "Something  went wrong while validating tokem"));
+      .status(500)
+      .json(new ApiError(500, "Something went wrong while validating token"));
   }
 };
-
 export const isStudent = (req, res, next) => {
   try {
     if (req.user.accountType !== "Student") {

@@ -19,7 +19,7 @@ export const updateProfile = async (req, res) => {
         .json(new ApiError(404, "These feilds are required"));
     }
 
-    const updatedUser = User.findByIdAndUpdate(
+    const updatedUser = await User.findByIdAndUpdate(
       userId,
       {
         firstName,
@@ -83,10 +83,11 @@ export const getUserProfile = async (req, res) => {
     }
 
     // Find user profile
-    const userProfile = await User.findById(userId)
-      .populate("courses", "courseName") // Populate courses with courseName field
-      .populate("courseProgress"); // Populate courseProgress
+    const userProfile = await User.findById(userId).populate("courses");
+    // Populate courses with courseName field
+    // Populate courseProgress
 
+    userProfile.password = undefined;
     if (!userProfile) {
       return res.status(404).json(new ApiError(404, "User not found"));
     }

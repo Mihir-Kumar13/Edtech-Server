@@ -121,3 +121,132 @@ export const generateEnrollmentEmail = (
   </html>
   `;
 };
+
+export const generateOtpEmail = (
+  otp,
+  username,
+  companyName,
+  supportEmail,
+  companyAddress
+) => {
+  return `
+  <!DOCTYPE html>
+  <html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Your OTP Code</title>
+    <style>
+      @keyframes fadeIn {
+        from { opacity: 0; }
+        to { opacity: 1; }
+      }
+      @keyframes slideIn {
+        from { transform: translateY(20px); }
+        to { transform: translateY(0); }
+      }
+      body {
+        font-family: 'Helvetica Neue', Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        background-color: #f4f4f4;
+        color: #333;
+      }
+      .container {
+        width: 100%;
+        max-width: 600px;
+        margin: 20px auto;
+        background-color: #ffffff;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        border-radius: 10px;
+        overflow: hidden;
+        animation: fadeIn 1s ease-in-out;
+      }
+      .header {
+        background-color: #1a73e8;
+        color: #ffffff;
+        text-align: center;
+        padding: 30px 0;
+        border-bottom: 5px solid #0c47a1;
+        animation: slideIn 1s ease-in-out;
+      }
+      .header h1 {
+        margin: 0;
+        font-size: 24px;
+        font-weight: bold;
+      }
+      .content {
+        padding: 40px 30px;
+        animation: slideIn 1s ease-in-out;
+      }
+      .content p {
+        margin: 0 0 20px;
+        font-size: 16px;
+        line-height: 1.5;
+      }
+      .otp-code {
+        font-size: 36px;
+        font-weight: bold;
+        color: #1a73e8;
+        text-align: center;
+        margin: 20px 0;
+        animation: fadeIn 1s ease-in-out;
+      }
+      .button {
+        display: block;
+        width: 100%;
+        max-width: 200px;
+        margin: 30px auto 0;
+        padding: 15px 0;
+        background-color: #1a73e8;
+        color: #ffffff;
+        text-align: center;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background-color 0.3s ease, transform 0.3s ease;
+        animation: slideIn 1s ease-in-out;
+      }
+      .button:hover {
+        background-color: #0c47a1;
+        transform: translateY(-2px);
+      }
+      .footer {
+        background-color: #f4f4f4;
+        text-align: center;
+        padding: 20px 0;
+        font-size: 14px;
+        color: #777;
+        border-top: 1px solid #ddd;
+        animation: fadeIn 1s ease-in-out;
+      }
+      .footer p {
+        margin: 5px 0;
+      }
+      .footer a {
+        color: #1a73e8;
+        text-decoration: none;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>Your OTP Code</h1>
+      </div>
+      <div class="content">
+        <p>Hi ${username},</p>
+        <p>We received a request to access your account. Use the following OTP to complete the process:</p>
+        <div class="otp-code">${otp}</div>
+        <p>This OTP is valid for 10 minutes. If you did not request this code, please contact our support team immediately.</p>
+        <a href="mailto:${supportEmail}" class="button">Contact Support</a>
+        <p>Thank you,<br>${companyName}</p>
+      </div>
+      <div class="footer">
+        <p>&copy; 2024 ${companyName}. All rights reserved.</p>
+        <p>${companyAddress}</p>
+      </div>
+    </div>
+  </body>
+  </html>
+  `;
+};

@@ -6,11 +6,12 @@ import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Section } from "../models/Section.model.js";
 import { RatingandReview } from "../models/RatingandReview.model.js";
-
+import mongoose from "mongoose";
 export const createCourse = async (req, res) => {
   try {
     const { courseName, courseDescription, WhatYouWillLearn, price, category } =
       req.body;
+
     const { thumbnail } = req.files;
 
     if (
@@ -54,7 +55,7 @@ export const createCourse = async (req, res) => {
       instructor: instructorDetails._id,
       price,
       category: categoryDetails._id,
-      thumbnail: thumbnailImage,
+      thumbnail: thumbnailImage.secure_url,
       WhatYouWillLearn,
     });
 
@@ -74,23 +75,34 @@ export const createCourse = async (req, res) => {
       .status(200)
       .json(new ApiResponse(200, newCourse, "Course created successfully"));
   } catch (error) {
+    console.error("Error in course creation:", error);
     return res.status(500).json(new ApiError(500, "Error in course creation"));
   }
 };
 
 export const getCourse = async (req, res) => {
   try {
-    const { courseId } = req.params;
+    // Extract courseId from req.params or req.body
+    const courseId = req.params.courseId || req.body.courseId;
 
+    // Check if courseId is provided
     if (!courseId) {
-      return res.status(400).json(new ApiError(400, "Course ID is required"));
+      return res.status(400).json({
+        statusCode: 400,
+        data: null,
+        success: false,
+        message: "Course ID is required",
+      });
     }
 
-    const courseDetails = await Course.findById(courseId)
+    const objectId = new mongoose.Types.ObjectId(courseId); // Corrected here
+
+    // Fetch course details with necessary population
+    const courseDetails = await Course.findById(objectId)
       .populate({
         path: "instructor",
         model: User,
-        select: "-password -token", // Exclude password and token fields
+        select: "-password -token", // Exclude password and token fields for security
       })
       .populate({
         path: "category",
@@ -111,26 +123,37 @@ export const getCourse = async (req, res) => {
       .populate({
         path: "studentsEnrolled",
         model: User,
-        select: "-password -token", // Exclude password and token fields
+        select: "-password -token", // Exclude password and token fields for security
       });
 
+    // Check if courseDetails were found
     if (!courseDetails) {
-      return res.status(404).json(new ApiError(404, "Course not found"));
+      return res.status(404).json({
+        statusCode: 404,
+        data: null,
+        success: false,
+        message: "Course not found",
+      });
     }
 
-    return res
-      .status(200)
-      .json(
-        new ApiResponse(
-          200,
-          courseDetails,
-          "Course details fetched successfully"
-        )
-      );
+    // Return course details with a successful response
+    return res.status(200).json({
+      statusCode: 200,
+      data: courseDetails,
+      success: true,
+      message: "Course details fetched successfully",
+    });
   } catch (error) {
-    return res
-      .status(500)
-      .json(new ApiError(500, "Error fetching course details"));
+    // Log the error for debugging purposes
+    console.error("Error fetching course details:", error);
+
+    // Return a 500 error response in case of an exception
+    return res.status(500).json({
+      statusCode: 500,
+      data: null,
+      success: false,
+      message: "Error fetching course details",
+    });
   }
 };
 
