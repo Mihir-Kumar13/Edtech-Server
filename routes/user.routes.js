@@ -17,7 +17,7 @@ import { auth } from "../middlewares/auth.middleware.js";
 
 const router = Router();
 
-router.route("/").post(servercheck);
+router.route("/").get(servercheck);
 router.route("/register").post(registerUser);
 router.route("/send-otp").post(sendOtp);
 router.route("/login").post(loginUser);
