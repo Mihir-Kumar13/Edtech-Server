@@ -22,7 +22,7 @@ const router = Router();
 
 router.route("/create-category").post(auth, isAdmin, createCategory);
 router.route("/showallcategory").get(showAllCategorys);
-router.route("/getcategorydetails").post(auth, getCategoryDetails);
+router.route("/getcategorydetails").post(getCategoryDetails);
 router.route("/create-course").post(auth, isInstructor, createCourse);
 router.route("/get-course").post(getCourse);
 router.route("/showallcourses").get(showAllCourses);
