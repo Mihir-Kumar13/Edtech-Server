@@ -23,6 +23,9 @@ app.use(
   })
 );
 
+app.get("/", (req, res) => {
+  res.status(200).json({ message: "server on" });
+});
 //routes
 
 import userRouter from "./routes/user.routes.js";
