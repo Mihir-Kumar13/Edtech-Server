@@ -24,7 +24,7 @@ router.route("/create-category").post(auth, isAdmin, createCategory);
 router.route("/showallcategory").get(showAllCategorys);
 router.route("/getcategorydetails").post(auth, getCategoryDetails);
 router.route("/create-course").post(auth, isInstructor, createCourse);
-router.route("/get-course").post(auth, getCourse);
+router.route("/get-course").post(getCourse);
 router.route("/showallcourses").get(showAllCourses);
 router.route("/create-section").post(auth, isInstructor, createSection);
 router.route("/update-section").post(auth, updateSection);

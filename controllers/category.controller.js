@@ -51,8 +51,13 @@ export const getCategoryDetails = async (req, res) => {
 
     const categoryDetails = await Category.findById(categoryId).populate({
       path: "courses",
-      select: "courseName studentsEnrolled",
+      populate: {
+        path: "instructor",
+        model: "User",
+      },
     });
+
+    //  console.log(categoryDetails);
 
     if (!categoryDetails) {
       return res.status(404).json(new ApiError(404, "Category not found"));

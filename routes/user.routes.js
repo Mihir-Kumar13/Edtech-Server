@@ -8,6 +8,7 @@ import {
   servercheck,
 } from "../controllers/auth.controller.js";
 import {
+  changePassword,
   deleteProfile,
   getUserProfile,
   updateProfile,
@@ -25,5 +26,6 @@ router.route("/update-profile").post(auth, updateProfile);
 router.route("/delete-profile").post(auth, deleteProfile);
 router.route("/logout").post(auth, logoutUser);
 router.route("/getcurrentuser").post(auth, getCurrentUser);
+router.route("/update-password").post(auth, changePassword);
 
 export default router;

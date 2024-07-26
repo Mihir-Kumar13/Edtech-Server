@@ -120,10 +120,10 @@ export const loginUser = async (req, res) => {
     if (!email || !password) {
       return res
         .status(403)
-        .json(new ApiResponse(200, "All fields are mandatory"));
+        .json(new ApiResponse(403, "All fields are mandatory"));
     }
 
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).populate({ path: "courses" });
     if (!user) {
       return res.status(400).json(new ApiError(400, "User doesn't exist"));
     }
@@ -141,13 +141,11 @@ export const loginUser = async (req, res) => {
       user.password = undefined;
 
       const options = {
-        expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
-        sameSite: "Lax",
+        expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days
+        sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // Use 'None' for cross-site cookies in production
         httpOnly: true,
-        secure: true, // Set to false for local development
+        secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
       };
-
-      console.log("Setting cookie with token:", token); // Debug log
 
       return res
         .cookie("token", token, options)
@@ -157,20 +155,20 @@ export const loginUser = async (req, res) => {
       return res.status(400).json(new ApiError(400, "Password is incorrect"));
     }
   } catch (error) {
-    console.log(error);
+    console.error(error);
     return res
-      .status(400)
-      .json(new ApiError(400, "Login failed, Try again later"));
+      .status(500)
+      .json(new ApiError(500, "Login failed, try again later"));
   }
 };
 
 export const logoutUser = (req, res) => {
   try {
     const options = {
-      expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000),
+      expires: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000), // 3 days
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax", // Use 'None' for cross-site cookies in production
       httpOnly: true,
-      secure: true,
-      sameSite: "Lax",
+      secure: process.env.NODE_ENV === "production", // Only send over HTTPS in production
     };
     res.cookie("token", "", options);
     return res

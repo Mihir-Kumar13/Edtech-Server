@@ -9,10 +9,23 @@ import { RatingandReview } from "../models/RatingandReview.model.js";
 import mongoose from "mongoose";
 export const createCourse = async (req, res) => {
   try {
-    const { courseName, courseDescription, WhatYouWillLearn, price, category } =
-      req.body;
+    const {
+      courseName,
+      courseDescription,
+      WhatYouWillLearn = "hii",
+      price,
+      category,
+    } = req.body;
 
     const { thumbnail } = req.files;
+    console.log(
+      courseName,
+      courseDescription,
+      WhatYouWillLearn,
+      price,
+      category,
+      thumbnail
+    );
 
     if (
       !courseName ||
@@ -87,6 +100,7 @@ export const getCourse = async (req, res) => {
 
     // Check if courseId is provided
     if (!courseId) {
+      console.log(courseId);
       return res.status(400).json({
         statusCode: 400,
         data: null,
@@ -159,7 +173,9 @@ export const getCourse = async (req, res) => {
 
 export const showAllCourses = async (req, res) => {
   try {
-    const allCourses = await Course.find({});
+    const allCourses = await Course.find({}).populate({
+      path: "instructor",
+    });
 
     return res
       .status(200)

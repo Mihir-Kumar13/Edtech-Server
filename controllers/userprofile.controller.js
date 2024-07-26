@@ -2,6 +2,32 @@ import { User } from "../models/User.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { Course } from "../models/Course.model.js";
+import bcrypt from "bcrypt";
+
+export const changePassword = async (req, res) => {
+  try {
+    // console.log(req.body);
+    const { email, oldPassword, newPassword } = req.body;
+    if (!oldPassword) {
+      return res.status(500).json(new ApiError(500, "Old Password required"));
+    }
+    if (!newPassword) {
+      return res.status(500).json(new ApiError(500, "New Password required"));
+    }
+    const user = await User.findOne({ email });
+    //console.log(user);
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    console.log(hashedPassword);
+    if (await bcrypt.compare(oldPassword, user.password)) {
+      await User.findOneAndUpdate({ email }, { password: hashedPassword });
+      return res
+        .status(200)
+        .json(new ApiResponse(200, " password changed succesfully "));
+    } else return res.status(500).json(new ApiError(500, "wrong password"));
+  } catch (error) {
+    return res.status(500).json(new ApiError(500, "error in update-password"));
+  }
+};
 
 export const updateProfile = async (req, res) => {
   try {
@@ -29,7 +55,9 @@ export const updateProfile = async (req, res) => {
         mobile,
       },
       { new: true }
-    ).select(["-password -token"]);
+    )
+      .select(["-password -token"])
+      .populate({ path: "courses" });
 
     return res
       .status(200)
