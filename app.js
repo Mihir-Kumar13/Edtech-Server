@@ -24,7 +24,7 @@ app.use(
 );
 
 app.get("/", (req, res) => {
-  res.status(200).json({ message: "server on" });
+  res.status(200).json({ message: "server on all ok" });
 });
 //routes
 
