@@ -7,6 +7,7 @@ import mongoose from "mongoose";
 export const createSection = async (req, res) => {
   try {
     const { sectionName, courseId } = req.body;
+    //console.log(sectionName, courseId);
     if (!sectionName || !courseId) {
       return res.status(400).json(new ApiError(400, "All fields are required"));
     }
@@ -14,6 +15,7 @@ export const createSection = async (req, res) => {
     // Create new section and save it to the database
     const newSection = await Section.create({ sectionName, courseId });
 
+    //console.log(newSection);
     // Update the course with the new section
     const updatedCourse = await Course.findByIdAndUpdate(
       courseId,

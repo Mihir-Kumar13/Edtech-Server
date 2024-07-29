@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import { ApiError } from "../utils/ApiError.js";
 
 export const auth = (req, res, next) => {
+  console.log(req.cookies.token);
   const token = req.cookies.token || req.body.token;
 
   if (!token) {
@@ -17,7 +18,6 @@ export const auth = (req, res, next) => {
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
     req.user = decoded;
-    //   console.log("Decoded user:", req.user);
     next();
   } catch (error) {
     console.log("JWT verification error:", error);
@@ -27,7 +27,6 @@ export const auth = (req, res, next) => {
 
 export const authorize = (role) => (req, res, next) => {
   if (!req.user) {
-    // console.log("User not found in request");
     return res.status(401).json(new ApiError(401, "Unauthorized request"));
   }
 

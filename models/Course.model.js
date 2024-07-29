@@ -5,6 +5,8 @@ const courseSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    isPublished: { type: Boolean, required: true },
+
     courseDescription: {
       type: String,
     },

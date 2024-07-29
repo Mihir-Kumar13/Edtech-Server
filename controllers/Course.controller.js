@@ -15,17 +15,19 @@ export const createCourse = async (req, res) => {
       WhatYouWillLearn = "hii",
       price,
       category,
+      isPublished,
     } = req.body;
 
     const { thumbnail } = req.files;
-    console.log(
-      courseName,
-      courseDescription,
-      WhatYouWillLearn,
-      price,
-      category,
-      thumbnail
-    );
+    // console.log(
+    //   courseName,
+    //   courseDescription,
+    //   WhatYouWillLearn,
+    //   price,
+    //   category,
+    //   thumbnail,
+    //   isPublished
+    // );
 
     if (
       !courseName ||
@@ -33,7 +35,8 @@ export const createCourse = async (req, res) => {
       !WhatYouWillLearn ||
       !category ||
       !price ||
-      !thumbnail
+      !thumbnail ||
+      !isPublished
     ) {
       return res.status(400).json(new ApiError(400, "All fields are required"));
     }
@@ -70,6 +73,7 @@ export const createCourse = async (req, res) => {
       category: categoryDetails._id,
       thumbnail: thumbnailImage.secure_url,
       WhatYouWillLearn,
+      isPublished,
     });
 
     await User.findByIdAndUpdate(
