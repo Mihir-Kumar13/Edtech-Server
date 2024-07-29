@@ -2,7 +2,7 @@ import jwt from "jsonwebtoken";
 import { ApiError } from "../utils/ApiError.js";
 
 export const auth = (req, res, next) => {
-  console.log(req.cookies.token);
+  //console.log(req.cookies.token);
   const token = req.cookies.token || req.body.token;
 
   if (!token) {

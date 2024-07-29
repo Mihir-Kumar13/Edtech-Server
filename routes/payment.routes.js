@@ -10,5 +10,5 @@ const router = Router();
 
 router.route("/").post(servercheck);
 router.route("/buy").post(auth, isStudent, capturePayment);
-router.route("/verify").post(auth, isStudent, verifySignature);
+router.route("/verify").post(verifySignature);
 export default router;
