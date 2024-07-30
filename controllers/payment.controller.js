@@ -1,7 +1,7 @@
 import { razorpayInstance } from "../utils/razorpayconfig.js";
 import { User } from "../models/User.model.js";
 import { Course } from "../models/Course.model.js";
-import { mailSender } from "../utils/mailSender.js";
+
 import { generateEnrollmentEmail } from "../utils/EnrollmentTemplate.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
@@ -62,8 +62,14 @@ export const capturePayment = async (req, res) => {
 };
 
 export const verifySignature = async (req, res) => {
-  const webhookSecret = "12345678";
+  const webhookSecret = process.env.WEBHOOK_SECRET;
   const signature = req.headers["x-razorpay-signature"];
+
+  if (!webhookSecret || !signature) {
+    return res
+      .status(400)
+      .json(new ApiError(400, "Missing webhook secret or signature"));
+  }
 
   const shasum = crypto.createHmac("sha256", webhookSecret);
   shasum.update(JSON.stringify(req.body));
@@ -76,6 +82,10 @@ export const verifySignature = async (req, res) => {
   console.log("Payment authorized");
 
   const { courseId, userId } = req.body.payload.payment.entity.notes;
+
+  if (!courseId || !userId) {
+    return res.status(400).json(new ApiError(400, "Invalid payload"));
+  }
 
   try {
     const enrolledCourse = await Course.findOneAndUpdate(
@@ -98,9 +108,6 @@ export const verifySignature = async (req, res) => {
       return res.status(400).json(new ApiError(400, "User not found"));
     }
 
-    // Optionally send a confirmation email
-    await mailSender.sendMail(enrolledStudent.email, "Enrollment Confirmation");
-
     return res
       .status(200)
       .json(
@@ -111,6 +118,7 @@ export const verifySignature = async (req, res) => {
         )
       );
   } catch (error) {
+    console.error(`Error in enrolling user: ${error.message}`);
     return res
       .status(500)
       .json(new ApiError(500, `Error in enrolling user: ${error.message}`));
