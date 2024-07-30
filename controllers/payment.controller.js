@@ -114,7 +114,7 @@ export const verifySignature = async (req, res) => {
         new ApiResponse(
           200,
           { enrolledCourse, enrolledStudent },
-          "Enrollment successful"
+          "Enrollment successful finished"
         )
       );
   } catch (error) {
