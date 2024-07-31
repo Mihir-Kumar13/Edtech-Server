@@ -186,7 +186,7 @@ export const getCurrentUser = async (req, res) => {
   const user = req.user;
 
   // Retrieve the user from the database if needed (optional)
-  const userdb = await User.findById(user.id);
+  const userdb = await User.findById(user.id).populate("courses");
 
   if (!userdb) {
     return res.status(404).json(new ApiError(404, "User not found."));

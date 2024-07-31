@@ -137,13 +137,7 @@ export const getCourse = async (req, res) => {
       .populate({
         path: "ratings",
         model: RatingandReview,
-      })
-      .populate({
-        path: "studentsEnrolled",
-        model: User,
-        select: "-password -token", // Exclude password and token fields for security
       });
-
     // Check if courseDetails were found
     if (!courseDetails) {
       return res.status(404).json({
