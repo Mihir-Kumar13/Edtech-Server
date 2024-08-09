@@ -81,6 +81,12 @@ export const createCourse = async (req, res) => {
       { new: true }
     );
 
+    await Course.findOneAndUpdate(
+      { _id: newCourse._id },
+      { $push: { studentsEnrolled: userId } },
+      { new: true }
+    );
+
     await Category.findByIdAndUpdate(
       categoryDetails._id,
       { $push: { courses: newCourse._id } },
