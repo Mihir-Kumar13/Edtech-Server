@@ -7,12 +7,12 @@ import { uploadToCloudinary } from "../utils/imageUploader.js";
 export const createsubSection = async (req, res) => {
   try {
     const { sectionId, title, description } = req.body;
-    //console.log(req.files);
-    console.log(sectionId, title, description);
-    console.log(req.files);
-    const video = req.files.videoFile;
+    //
 
-    console.log(sectionId, title, description, video);
+    const video = req.files.video;
+    console.log(req.files);
+
+    // console.log(sectionId, title, description, video);
 
     if (!sectionId || !title || !description || !video) {
       return res.status(400).json(new ApiError(400, "All fields are required"));
@@ -23,7 +23,7 @@ export const createsubSection = async (req, res) => {
       process.env.FOLDER_NAME
     );
 
-    console.log(videoDetails);
+    //console.log(videoDetails);
     const newSubSection = await SubSection.create({
       title,
       description,

@@ -15,19 +15,19 @@ export const createCourse = async (req, res) => {
       WhatYouWillLearn = "hii",
       price,
       category,
-      isPublished,
+      isPublished = false,
     } = req.body;
 
     const { thumbnail } = req.files;
-    // console.log(
-    //   courseName,
-    //   courseDescription,
-    //   WhatYouWillLearn,
-    //   price,
-    //   category,
-    //   thumbnail,
-    //   isPublished
-    // );
+    console.log(
+      courseName,
+      courseDescription,
+      WhatYouWillLearn,
+      price,
+      category,
+      thumbnail,
+      isPublished
+    );
 
     if (
       !courseName ||
@@ -35,8 +35,7 @@ export const createCourse = async (req, res) => {
       !WhatYouWillLearn ||
       !category ||
       !price ||
-      !thumbnail ||
-      !isPublished
+      !thumbnail
     ) {
       return res.status(400).json(new ApiError(400, "All fields are required"));
     }
