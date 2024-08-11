@@ -1,3 +1,4 @@
+import { Course } from "../models/Course.model.js";
 import { Section } from "../models/Section.model.js";
 import { SubSection } from "../models/SubSection.model.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -7,12 +8,8 @@ import { uploadToCloudinary } from "../utils/imageUploader.js";
 export const createsubSection = async (req, res) => {
   try {
     const { sectionId, title, description } = req.body;
-    //
-
     const video = req.files.video;
     console.log(req.files);
-
-    // console.log(sectionId, title, description, video);
 
     if (!sectionId || !title || !description || !video) {
       return res.status(400).json(new ApiError(400, "All fields are required"));
@@ -23,12 +20,11 @@ export const createsubSection = async (req, res) => {
       process.env.FOLDER_NAME
     );
 
-    //console.log(videoDetails);
     const newSubSection = await SubSection.create({
       title,
       description,
       videoUrl: videoDetails.url,
-      timeduration: Number(videoDetails.duration) / 60 || 5, // Convert duration to minutes if necessary
+      timeduration: Number(videoDetails.duration) / 60 || 5,
     });
 
     const updatedSection = await Section.findByIdAndUpdate(
@@ -43,14 +39,23 @@ export const createsubSection = async (req, res) => {
       }
     ).populate("subSection");
 
+    // Find the course that contains this section
+    const course = await Course.findOne({ courseContent: sectionId }).populate({
+      path: "courseContent",
+      populate: {
+        path: "subSection",
+      },
+    });
+
+    if (!course) {
+      return res.status(404).json(new ApiError(404, "Course not found"));
+    }
+    console.log(course);
+
     return res
       .status(200)
       .json(
-        new ApiResponse(
-          200,
-          updatedSection,
-          "new Subsection created succcesfully"
-        )
+        new ApiResponse(200, course, "New Subsection created successfully")
       );
   } catch (error) {
     return res
