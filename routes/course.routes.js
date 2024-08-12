@@ -1,5 +1,9 @@
 import { Router } from "express";
-import { isAdmin, isInstructor } from "../middlewares/auth.middleware.js";
+import {
+  isAdmin,
+  isInstructor,
+  isStudent,
+} from "../middlewares/auth.middleware.js";
 import {
   createCategory,
   getCategoryDetails,
@@ -16,7 +20,11 @@ import {
   deleteSection,
   updateSection,
 } from "../controllers/section.controller.js";
-import { createsubSection } from "../controllers/subSection.controller.js";
+import {
+  createreview,
+  createsubSection,
+  getallreviews,
+} from "../controllers/subSection.controller.js";
 
 const router = Router();
 
@@ -31,5 +39,7 @@ router.route("/update-section").post(auth, updateSection);
 router.route("/delete-section").post(auth, deleteSection);
 
 router.route("/create-subsection").post(auth, isInstructor, createsubSection);
+router.route("/create-review").post(auth, createreview);
+router.route("/review").get(getallreviews);
 
 export default router;

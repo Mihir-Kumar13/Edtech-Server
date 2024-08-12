@@ -1,4 +1,5 @@
 import { Course } from "../models/Course.model.js";
+import { RatingandReview } from "../models/RatingandReview.model.js";
 import { Section } from "../models/Section.model.js";
 import { SubSection } from "../models/SubSection.model.js";
 import { ApiError } from "../utils/ApiError.js";
@@ -61,5 +62,38 @@ export const createsubSection = async (req, res) => {
     return res
       .status(500)
       .json(new ApiError(500, "Error in creating Subsection", error.message));
+  }
+};
+
+export const createreview = async (req, res) => {
+  try {
+    const { rating, review } = req.body;
+    if (!rating || !review) {
+      return res.status(400).json(new ApiError(400, "all fields required"));
+    }
+    const userId = req.user.id;
+
+    const newreview = await RatingandReview.create({
+      rating,
+      review,
+      user: userId,
+    });
+    return res
+      .status(200)
+      .json(new ApiResponse(200, newreview, "Reviews Created"));
+  } catch (error) {
+    return res.status(400).json(new ApiError(500, "error in review"));
+  }
+};
+
+export const getallreviews = async (req, res) => {
+  try {
+    const allreviews = await RatingandReview.find().populate("user");
+
+    return res
+      .status(200)
+      .json(new ApiResponse(200, allreviews, "Reviews Successfully Fetched"));
+  } catch (error) {
+    return res.status(500).json(new ApiError(500, "Error in getting reviews"));
   }
 };
