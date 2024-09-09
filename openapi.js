@@ -9,7 +9,7 @@ export const openapispec = {
   },
   servers: [
     {
-      url: "http://localhost:3000/api/v1",
+      url: "https://edtech-server-beige.vercel.app/api/v1",
       description: "Local server",
     },
   ],
